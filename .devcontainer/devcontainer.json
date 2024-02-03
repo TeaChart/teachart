@@ -1,0 +1,24 @@
+{
+  "name": "TeaChart DevContainer",
+  "image": "mcr.microsoft.com/devcontainers/go:1.21-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "editorconfig.editorconfig",
+        "ms-vscode.makefile-tools",
+        "golang.go",
+        "DavidAnson.vscode-markdownlint",
+        "ms-azuretools.vscode-docker",
+        "zixuanchen.vitest-explorer",
+        "GitHub.vscode-pull-request-github",
+        "eamodio.gitlens",
+        "redhat.vscode-yamlw"
+      ]
+    }
+  },
+  "postCreateCommand": "make deps"
+}
