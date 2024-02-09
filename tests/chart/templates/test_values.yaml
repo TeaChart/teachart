@@ -1,0 +1,10 @@
+# should have .Values.TeaChart
+{{ .Values.TeaChart.ProjectName }}
+{{ .Values.TeaChart.ProjectDir }}
+{{ .Values.TeaChart.TempDir }}
+
+# helm chart metadata
+{{ .Chart.Name }}
+{{ .Chart.Description }}
+{{ .Chart.Version }}
+{{ .Chart.AppVersion }}

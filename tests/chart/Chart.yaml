@@ -1,0 +1,4 @@
+name: gitea
+description: test chart for teachart
+version: 0.0.1
+appVersion: nightly

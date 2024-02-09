@@ -1,0 +1,22 @@
+name: build-tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+        - uses: actions/checkout@v4
+        - uses: actions/setup-go@v5
+          with:
+            go-version-file: go.mod
+            check-latest: true
+        - run: make deps
+        - run: make build
+        - run: make lint
+        - run: make test
+          timeout-minutes: 30
