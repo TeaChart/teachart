@@ -15,6 +15,10 @@ VERSION_LDFLAGS=\
 COBRA_CLI_PACKAGE ?= github.com/spf13/cobra-cli@v1.3.0
 GOLANGCI_LINT_PACKAGE ?= github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
 
+TEST_TAGS ?=
+GOTESTFLAGS ?=
+
+
 ifeq ($(IS_WINDOWS),yes)
 	GOFLAGS := -v -buildmode=exe
 	EXECUTABLE ?= teachart.exe
@@ -60,3 +64,8 @@ lint:
 .PHONY: lint-fix
 lint-fix:
 	$(GO) run $(GOLANGCI_LINT_PACKAGE) run --fix
+
+.PHONY: test
+test:
+	@echo "Running go test with -tags '$(TEST_TAGS)'"
+	@$(GO) test $(GOTESTFLAGS) -tags='$(TEST_TAGS)' ./... .
