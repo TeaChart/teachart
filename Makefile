@@ -13,11 +13,14 @@ VERSION_LDFLAGS=\
   -X go.szostok.io/version.dirtyBuild=false
 
 COBRA_CLI_PACKAGE ?= github.com/spf13/cobra-cli@v1.3.0
-GOLANGCI_LINT_PACKAGE ?= github.com/golangci/golangci-lint/cmd/golangci-lint@v1.55.2
+GOLANGCI_LINT_PACKAGE ?= github.com/golangci/golangci-lint/cmd/golangci-lint@v1.56.1
+MISSPELL_PACKAGE ?= github.com/client9/misspell/cmd/misspell@v0.3.4
+GOVULNCHECK_PACKAGE ?= golang.org/x/vuln/cmd/govulncheck@v1.0.4
 
 TEST_TAGS ?=
 GOTESTFLAGS ?=
 
+GO_DIRS := build cmd pkg tests
 
 ifeq ($(IS_WINDOWS),yes)
 	GOFLAGS := -v -buildmode=exe
@@ -32,18 +35,18 @@ help:
 	@echo "Make Help:"
 	@echo " - \"\"                               equivalent to \"build\""
 	@echo " - build                            build everything"
-	@echo " - watch                            watch everything and continuously rebuild"
+	@echo " - checks                           checks go files"
 	@echo " - deps                             install dependencies"
 	@echo " - deps-mod                         install go mod dependencies"
 	@echo " - deps-tools                       install tool dependencies"
+	@echo " - lint                             check lint"
+	@echo " - lint-fix                         check lint and fix"
+	@echo " - test                             run go test"
+	@echo " - tidy                             run go tidy"
 
 .PHONY: build
 build:
 	$(GO) build -ldflags="$(VERSION_LDFLAGS)"
-
-.PHONY: watch
-watch:
-	$(GO) run $(AIR_PACKAGE) -c .air.toml
 
 .PHONY: deps
 deps: deps-mod deps-tools
@@ -56,6 +59,8 @@ deps:
 deps-tools:
 	$(GO) install $(COBRA_CLI_PACKAGE)
 	$(GO) install $(GOLANGCI_LINT_PACKAGE)
+	$(GO) install $(GOVULNCHECK_PACKAGE)
+	$(GO) install $(MISSPELL_PACKAGE)
 
 .PHONY: lint
 lint:
@@ -69,3 +74,28 @@ lint-fix:
 test:
 	@echo "Running go test with -tags '$(TEST_TAGS)'"
 	@$(GO) test $(GOTESTFLAGS) -tags='$(TEST_TAGS)' ./... .
+
+.PHONY: checks
+checks: tidy-check misspell-check security-check
+
+.PHONY: tidy
+tidy:
+	$(eval MIN_GO_VERSION := $(shell grep -Eo '^go\s+[0-9]+\.[0-9.]+' go.mod | cut -d' ' -f2))
+	$(GO) mod tidy -compat=$(MIN_GO_VERSION)
+
+.PHONY: tidy-check
+tidy-check: tidy
+	@diff=$$(git diff --color=always go.mod go.sum); \
+	if [ -n "$$diff" ]; then \
+		echo "Please run 'make tidy' and commit the result:"; \
+		echo "$${diff}"; \
+		exit 1; \
+	fi
+
+.PHONY: misspell-check
+misspell-check:
+	go run $(MISSPELL_PACKAGE) -error $(GO_DIRS)
+
+.PHONY: security-check
+security-check:
+	go run $(GOVULNCHECK_PACKAGE) ./...

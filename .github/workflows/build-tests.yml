@@ -16,7 +16,8 @@ jobs:
             go-version-file: go.mod
             check-latest: true
         - run: make deps
-        - run: make build
+        - run: make checks
         - run: make lint
+        - run: make build
         - run: make test
           timeout-minutes: 30
