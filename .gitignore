@@ -1,0 +1,15 @@
+# temp folder
+/.teachart
+
+# chart files
+/templates/
+/metadata.yaml
+/values.schema.json
+/values.yaml
+
+# repos folder
+/repos
+
+# binary file
+/teachart
+/*.exe
