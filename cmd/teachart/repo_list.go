@@ -9,26 +9,30 @@ import (
 	"github.com/gosuri/uitable"
 	"github.com/spf13/cobra"
 	"github.com/yp05327/teachart/pkg/app"
-	"github.com/yp05327/teachart/pkg/options"
-	"github.com/yp05327/teachart/pkg/repo"
 )
 
-func NewRepoListCmd(ctx context.Context, repoOptions *options.RepoOptions) *cobra.Command {
-	repoListOptions := options.NewRepoListOptions(repoOptions)
+type repoListOptions struct {
+	*repoOptions
+}
+
+func NewRepoListCmd(ctx context.Context, repoOpts *repoOptions) *cobra.Command {
+	opts := &repoListOptions{
+		repoOptions: repoOpts,
+	}
 
 	cmd := &cobra.Command{
 		Use:   "list",
 		Short: "List all chart repos.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runRepoList(ctx, repoOptions.Manager, repoListOptions)
+			return runRepoList(ctx, opts)
 		},
 	}
 
 	return cmd
 }
 
-func runRepoList(ctx context.Context, manager *repo.Manager, opts *options.RepoListOptions) error {
-	reposMap, err := manager.List()
+func runRepoList(ctx context.Context, opts *repoListOptions) error {
+	reposMap, err := opts.manager.List()
 	if err != nil {
 		return err
 	}

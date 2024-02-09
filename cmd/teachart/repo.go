@@ -13,26 +13,30 @@ import (
 )
 
 type repoOptions struct {
-	repoName string
+	*options.GlobalOptions
+
+	manager *repo.Manager
 }
 
 func NewRepoCmd(ctx context.Context, globalOptions *options.GlobalOptions) *cobra.Command {
-	repoOptions := options.NewRepoOptions(globalOptions)
+	opts := &repoOptions{
+		GlobalOptions: globalOptions,
+	}
 
 	cmd := &cobra.Command{
 		Use:   "repo add|remove|list",
 		Short: "add, remove, list chart repos.",
 		Args:  NoArgs,
 		PersistentPreRunE: func(c *cobra.Command, args []string) error {
-			repoOptions.Manager = repo.NewManager(filepath.Join(globalOptions.GetInstallDir(), app.DefaultRepoDir), app.DefaultRemoteName)
-			return repoOptions.Manager.Init()
+			opts.manager = repo.NewManager(filepath.Join(globalOptions.GetInstallDir(), app.DefaultRepoDir), app.DefaultRemoteName)
+			return opts.manager.Init()
 		},
 	}
 
 	cmd.AddCommand(
-		NewRepoAddCmd(ctx, repoOptions),
-		NewRepoRemoveCmd(ctx, repoOptions),
-		NewRepoListCmd(ctx, repoOptions),
+		NewRepoAddCmd(ctx, opts),
+		NewRepoRemoveCmd(ctx, opts),
+		NewRepoListCmd(ctx, opts),
 	)
 
 	return cmd
