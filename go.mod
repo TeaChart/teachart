@@ -3,9 +3,9 @@ module github.com/yp05327/teachart
 go 1.21
 
 require (
-	github.com/compose-spec/compose-go/v2 v2.0.0-rc.2.0.20240124222107-e4977bf810b4
-	github.com/docker/cli v25.0.0+incompatible
-	github.com/docker/compose/v2 v2.24.2
+	github.com/compose-spec/compose-go/v2 v2.0.0-rc.3
+	github.com/docker/cli v25.0.1+incompatible
+	github.com/docker/compose/v2 v2.24.5
 	github.com/go-git/go-git/v5 v5.11.0
 	github.com/gosuri/uitable v0.0.4
 	github.com/pkg/errors v0.9.1
@@ -58,7 +58,7 @@ require (
 	github.com/distribution/reference v0.5.0 // indirect
 	github.com/docker/buildx v0.12.0-rc2.0.20231219140829-617f538cb315 // indirect
 	github.com/docker/distribution v2.8.3+incompatible // indirect
-	github.com/docker/docker v25.0.0+incompatible // indirect
+	github.com/docker/docker v25.0.1+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.8.1 // indirect
 	github.com/docker/go v1.5.1-1.0.20160303222718-d30aec9fd63c // indirect
 	github.com/docker/go-connections v0.5.0 // indirect
