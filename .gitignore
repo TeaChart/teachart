@@ -13,3 +13,6 @@
 # binary file
 /teachart
 /*.exe
+
+# test folder
+/test

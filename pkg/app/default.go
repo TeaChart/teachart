@@ -9,17 +9,16 @@ const (
 
 	DefaultRemoteName string = "origin"
 
-	DefaultMetadataFileName     string = "TeaChart.yaml"
+	DefaultMetadataFileName     string = "Chart.yaml"
 	DefaultValuesFileName       string = "values.yaml"
 	DefaultValuesSchemaFileName string = "values.schema.json"
 	DefaultNotesFileName        string = "NOTES.txt"
 
+	DefaultMetadataFile string = ""
+	DefaultValuesFile   string = ""
+	DefaultNotesFile    string = ""
+
 	// docker compose
 	DefaultComposeExecutable string = "docker"
 	DefaultTempDirName       string = ".teachart"
-	DefaultChartName         string = "TeaChart"
-	DefaultChartVersion      string = "0.0.0"
-	DefaultAppVersion        string = "0.0.0"
-	DefaultComposeVersion    string = "3.11"
-	DefaultDescription       string = "A new tea chart"
 )

@@ -5,11 +5,19 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"regexp"
 
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
+	"github.com/yp05327/teachart/pkg/app"
 	"github.com/yp05327/teachart/pkg/options"
-	"helm.sh/helm/v3/pkg/chartutil"
 )
+
+var chartName = regexp.MustCompile("^[a-zA-Z0-9._-]+$")
+
+const maxChartNameLength = 250
 
 type initOptions struct {
 	*options.GlobalOptions
@@ -23,14 +31,13 @@ func NewInitCmd(ctx context.Context, globalOptions *options.GlobalOptions) *cobr
 	}
 
 	cmd := &cobra.Command{
-		Use:   "init [NAME]",
-		Short: "Initialize the teachart. Default name is folder name.",
+		Use:   "init",
+		Short: "Initialize a teachart",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if len(args) > 0 {
-				initOptions.Name = args[0]
+			if len(initOptions.ChartOptions.Name) == 0 {
+				initOptions.ChartOptions.Name = globalOptions.GetProjectName()
 			}
-
-			return runInit(ctx, initOptions)
+			return runInit(ctx, cmd, initOptions)
 		},
 	}
 	flags := cmd.Flags()
@@ -39,10 +46,69 @@ func NewInitCmd(ctx context.Context, globalOptions *options.GlobalOptions) *cobr
 	return cmd
 }
 
-func runInit(ctx context.Context, opts *initOptions) error {
-	// TODO
+func runInit(ctx context.Context, cmd *cobra.Command, opts *initOptions) error {
+	// Sanity-check the name of a chart so user doesn't create one that causes problems.
+	if opts.ChartOptions.Name == "" || len(opts.ChartOptions.Name) > maxChartNameLength {
+		return fmt.Errorf("chart name must be between 1 and %d characters", maxChartNameLength)
+	}
+	if !chartName.MatchString(opts.Name) {
+		return fmt.Errorf("chart name must match the regular expression %q", chartName.String())
+	}
 
-	dir, err := chartutil.Create(opts.Name, opts.GetProjectDir())
-	fmt.Println(dir)
-	return err
+	path, err := filepath.Abs(opts.GetProjectDir())
+	if err != nil {
+		return err
+	}
+
+	if fi, err := os.Stat(path); err != nil {
+		return err
+	} else if !fi.IsDir() {
+		return errors.Errorf("no such directory %s", path)
+	}
+
+	cdir := filepath.Join(path, opts.ChartOptions.Name)
+	if fi, err := os.Stat(cdir); err == nil && !fi.IsDir() {
+		return errors.Errorf("file %s already exists and is not a directory", cdir)
+	}
+
+	files := []struct {
+		path    string
+		content string
+	}{
+		{
+			// Chart.yaml
+			path:    filepath.Join(cdir, app.DefaultMetadataFileName),
+			content: app.DefaultMetadataFile,
+		},
+		{
+			// values.yaml
+			path:    filepath.Join(cdir, app.DefaultValuesFileName),
+			content: app.DefaultValuesFile,
+		},
+		{
+			// NOTES.txt
+			path:    filepath.Join(cdir, app.DefaultNotesFileName),
+			content: app.DefaultNotesFile,
+		},
+	}
+
+	for _, file := range files {
+		if _, err := os.Stat(file.path); err == nil {
+			// There is no handle to a preferred output stream here.
+			fmt.Fprintf(cmd.OutOrStdout(), "WARNING: File %q already exists. Overwriting.\n", file.path)
+		}
+		if err := os.MkdirAll(filepath.Dir(file.path), 0755); err != nil {
+			return err
+		}
+		if err := os.WriteFile(file.path, []byte(file.content), 0644); err != nil {
+			return err
+		}
+	}
+	// add the TemplatesDir
+	if err := os.MkdirAll(filepath.Join(cdir, app.DefaultTemplatesDir), 0755); err != nil {
+		return err
+	}
+
+	fmt.Fprintln(cmd.OutOrStdout(), "created")
+	return nil
 }
