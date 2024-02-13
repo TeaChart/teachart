@@ -88,7 +88,7 @@ func runLint(ctx context.Context, opts lintOptions) error {
 		logrus.Debugf("Temp directory created:%s", tempDir)
 
 		// render templates
-		renderEngine, err := engine.NewRenderEngine(chartDir, opts.GetTeaChart())
+		renderEngine, err := engine.NewRenderEngine(chartDir, opts.GetTeaChart(), &engine.NewEngineOptions{Strict: true})
 		if err != nil {
 			return nil, errors.Wrap(err, "Create helm engine error")
 		}

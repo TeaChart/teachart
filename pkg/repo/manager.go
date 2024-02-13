@@ -44,8 +44,7 @@ func (m *Manager) getRepoPath(name string) string {
 func (m *Manager) Remove(name string) error {
 	err := os.RemoveAll(m.getRepoPath(name))
 	if os.IsNotExist(err) {
-		logrus.Warnf("repo `%s` does not exist in %s", name, m.rootDir)
-		return nil
+		return fmt.Errorf("repo `%s` does not exist in %s", name, m.rootDir)
 	}
 	return err
 }
@@ -91,7 +90,6 @@ func (m *Manager) Add(ctx context.Context, name, url string, force bool) error {
 	}
 
 	// load git repo
-	fmt.Printf("adding repo `%s` from %s\n", name, url)
 	if err := repoClient.Init(ctx, url); err != nil {
 		if !errors.Is(err, git.ErrRepositoryAlreadyExists) {
 			// need rollback when init failed

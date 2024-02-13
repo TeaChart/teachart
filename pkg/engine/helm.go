@@ -26,15 +26,20 @@ type Helm struct {
 	teachart *TeaChart
 }
 
-func newHelm(chartDir string, teachart *TeaChart) (*Helm, error) {
+func newHelm(chartDir string, teachart *TeaChart, opts *NewEngineOptions) (*Helm, error) {
 	chart, err := loader.Load(chartDir)
 	if err != nil {
 		return nil, err
 	}
 	// TODO support Dependencies
 
+	if opts == nil {
+		opts = &NewEngineOptions{}
+	}
 	return &Helm{
-		engine:   &helm_engine.Engine{},
+		engine: &helm_engine.Engine{
+			Strict: opts.Strict,
+		},
 		chart:    chart,
 		teachart: teachart,
 	}, nil

@@ -4,6 +4,7 @@ package repo
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/go-git/go-git/v5"
@@ -31,11 +32,16 @@ func (c *Client) Checkout(ctx context.Context, authMethod transport.AuthMethod, 
 		gitOpts.Hash = plumbing.NewHash(opts.Commit)
 	} else {
 		tag, err := c.GetTagByVersion(opts.Version)
-		if err != nil {
+		if errors.Is(err, git.ErrTagNotFound) {
+			// try to get the main branch
+			fetchOpts.Ref = config.RefSpec("refs/heads/main:refs/heads/main")
+			gitOpts.Branch = "refs/heads/main"
+		} else if err != nil {
 			return err
+		} else {
+			fetchOpts.Ref = config.RefSpec(fmt.Sprintf("refs/tags/%s:refs/tags/%s", tag, tag))
+			gitOpts.Branch = plumbing.ReferenceName(tag)
 		}
-		fetchOpts.Ref = config.RefSpec(fmt.Sprintf("refs/tags/%s:refs/tags/%s", tag, tag))
-		gitOpts.Branch = plumbing.ReferenceName(tag)
 	}
 
 	if err := c.Fetch(ctx, authMethod, fetchOpts); err != nil {

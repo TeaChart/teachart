@@ -5,6 +5,7 @@ package cmd
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/go-git/go-git/v5"
 	"github.com/sirupsen/logrus"
@@ -34,7 +35,7 @@ func NewRepoAddCmd(ctx context.Context, repoOpts *repoOptions) *cobra.Command {
 			opts.Name = args[0]
 			opts.URL = args[1]
 
-			return runRepoAdd(ctx, opts.manager, opts)
+			return runRepoAdd(ctx, cmd, opts.manager, opts)
 		},
 	}
 
@@ -44,7 +45,8 @@ func NewRepoAddCmd(ctx context.Context, repoOpts *repoOptions) *cobra.Command {
 	return cmd
 }
 
-func runRepoAdd(ctx context.Context, manager *repo.Manager, opts *repoAddOptions) error {
+func runRepoAdd(ctx context.Context, cmd *cobra.Command, manager *repo.Manager, opts *repoAddOptions) error {
+	fmt.Fprintf(cmd.OutOrStdout(), "adding repo `%s` from %s\n", opts.Name, opts.URL)
 	err := manager.Add(ctx, opts.Name, opts.URL, opts.force)
 	if errors.Is(err, git.ErrRepositoryAlreadyExists) {
 		logrus.Errorf("repo `%s` already exists. use --force/-f to overwrite the repo.", opts.Name)

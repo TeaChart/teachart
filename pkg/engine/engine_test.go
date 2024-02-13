@@ -8,7 +8,8 @@ import (
 	"helm.sh/helm/v3/pkg/cli/values"
 )
 
-const testChartDir = "../../tests/chart"
+const testChartDir = "../../tests/data/chart"
+const testValuesFile = "../../tests/data/values.yaml"
 
 var testTeaChart = TeaChart{
 	ProjectName: "test",
@@ -17,9 +18,11 @@ var testTeaChart = TeaChart{
 }
 
 func TestHelmRender(t *testing.T) {
-	e, err := NewRenderEngine(testChartDir, &testTeaChart)
+	e, err := NewRenderEngine(testChartDir, &testTeaChart, &NewEngineOptions{Strict: true})
 	assert.NoError(t, err)
 
-	_, err = e.Render(values.Options{}, false)
+	_, err = e.Render(values.Options{
+		ValueFiles: []string{testValuesFile},
+	}, false)
 	assert.NoError(t, err)
 }

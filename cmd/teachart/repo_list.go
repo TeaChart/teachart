@@ -24,21 +24,21 @@ func NewRepoListCmd(ctx context.Context, repoOpts *repoOptions) *cobra.Command {
 		Use:   "list",
 		Short: "List all chart repos.",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runRepoList(ctx, opts)
+			return runRepoList(ctx, cmd, opts)
 		},
 	}
 
 	return cmd
 }
 
-func runRepoList(ctx context.Context, opts *repoListOptions) error {
+func runRepoList(ctx context.Context, cmd *cobra.Command, opts *repoListOptions) error {
 	reposMap, err := opts.manager.List()
 	if err != nil {
 		return err
 	}
 
 	if len(reposMap) == 0 {
-		fmt.Println("no repositories. use `repo add` to add repos")
+		fmt.Fprintln(cmd.OutOrStdout(), "no repositories. use `repo add` to add repos")
 		return nil
 	}
 
@@ -51,6 +51,6 @@ func runRepoList(ctx context.Context, opts *repoListOptions) error {
 		}
 		table.AddRow(name, remote.Config().URLs[0])
 	}
-	fmt.Println(table.String())
+	fmt.Fprintln(cmd.OutOrStdout(), table.String())
 	return nil
 }
