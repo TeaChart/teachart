@@ -3,7 +3,7 @@ module github.com/yp05327/teachart
 go 1.22
 
 require (
-	github.com/compose-spec/compose-go/v2 v2.0.0-rc.3
+	github.com/compose-spec/compose-go/v2 v2.0.0-rc.5
 	github.com/docker/cli v25.0.3+incompatible
 	github.com/docker/compose/v2 v2.24.5
 	github.com/go-git/go-git/v5 v5.11.0
@@ -189,7 +189,7 @@ require (
 	go.starlark.net v0.0.0-20240123142251-f86470692795 // indirect
 	go.uber.org/mock v0.4.0 // indirect
 	golang.org/x/crypto v0.18.0 // indirect
-	golang.org/x/exp v0.0.0-20230713183714-613f0c0eb8a1 // indirect
+	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3 // indirect
 	golang.org/x/mod v0.14.0 // indirect
 	golang.org/x/net v0.20.0 // indirect
 	golang.org/x/oauth2 v0.16.0 // indirect
