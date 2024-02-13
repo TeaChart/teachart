@@ -1,6 +1,6 @@
 module github.com/yp05327/teachart
 
-go 1.21
+go 1.22
 
 require (
 	github.com/compose-spec/compose-go/v2 v2.0.0-rc.3
