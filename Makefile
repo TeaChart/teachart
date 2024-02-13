@@ -64,7 +64,7 @@ deps-tools:
 
 .PHONY: lint
 lint:
-	$(GO) run $(GOLANGCI_LINT_PACKAGE) run
+	$(GO) run $(GOLANGCI_LINT_PACKAGE) run --timeout=5m
 
 .PHONY: lint-fix
 lint-fix:
