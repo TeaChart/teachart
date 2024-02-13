@@ -4,6 +4,7 @@ package cmd
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/spf13/cobra"
 	"github.com/yp05327/teachart/pkg/repo"
@@ -27,13 +28,17 @@ func NewRepoRemoveCmd(ctx context.Context, repoOpts *repoOptions) *cobra.Command
 		RunE: func(cmd *cobra.Command, args []string) error {
 			opts.name = args[0]
 
-			return runRepoRemove(ctx, opts.manager, opts)
+			return runRepoRemove(ctx, cmd, opts.manager, opts)
 		},
 	}
 
 	return cmd
 }
 
-func runRepoRemove(ctx context.Context, manager *repo.Manager, opts *repoRemoveOptions) error {
-	return manager.Remove(opts.name)
+func runRepoRemove(ctx context.Context, cmd *cobra.Command, manager *repo.Manager, opts *repoRemoveOptions) error {
+	err := manager.Remove(opts.name)
+	if err == nil {
+		fmt.Fprintf(cmd.OutOrStdout(), "repo %s removed\n", opts.name)
+	}
+	return err
 }

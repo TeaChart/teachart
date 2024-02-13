@@ -74,7 +74,7 @@ func NewTemplateCmd(ctx context.Context, globalOptions *options.GlobalOptions) *
 }
 
 func runTemplate(ctx context.Context, opts templateOptions) error {
-	renderEngine, err := engine.NewRenderEngine(opts.GetChartDir(), opts.GetTeaChart())
+	renderEngine, err := engine.NewRenderEngine(opts.GetChartDir(), opts.GetTeaChart(), nil)
 	if err != nil {
 		return errors.Wrap(err, "Create helm engine error")
 	}

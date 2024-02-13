@@ -8,3 +8,9 @@
 {{ .Chart.Description }}
 {{ .Chart.Version }}
 {{ .Chart.AppVersion }}
+
+# default values
+{{ .Values.default.string }}
+
+# user values from file
+{{ .Values.file.string }}
