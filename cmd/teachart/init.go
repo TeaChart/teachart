@@ -78,17 +78,17 @@ func runInit(ctx context.Context, cmd *cobra.Command, opts *initOptions) error {
 		{
 			// Chart.yaml
 			path:    filepath.Join(cdir, app.DefaultMetadataFileName),
-			content: app.DefaultMetadataFile,
+			content: fmt.Sprintf(app.DefaultMetadataFile, opts.Name),
 		},
 		{
 			// values.yaml
 			path:    filepath.Join(cdir, app.DefaultValuesFileName),
-			content: app.DefaultValuesFile,
+			content: fmt.Sprintf(app.DefaultValuesFile, opts.Name),
 		},
 		{
 			// NOTES.txt
 			path:    filepath.Join(cdir, app.DefaultNotesFileName),
-			content: app.DefaultNotesFile,
+			content: fmt.Sprintf(app.DefaultNotesFile, opts.Name),
 		},
 	}
 
