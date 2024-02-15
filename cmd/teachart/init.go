@@ -109,6 +109,6 @@ func runInit(ctx context.Context, cmd *cobra.Command, opts *initOptions) error {
 		return err
 	}
 
-	fmt.Fprintln(cmd.OutOrStdout(), "created")
+	fmt.Fprintf(cmd.OutOrStdout(), "%s created\n", opts.Name)
 	return nil
 }
