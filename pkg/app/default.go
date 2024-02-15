@@ -9,7 +9,7 @@ const (
 
 	DefaultRemoteName string = "origin"
 
-	DefaultMetadataFileName     string = "TeaChart.yaml"
+	DefaultMetadataFileName     string = "Chart.yaml"
 	DefaultValuesFileName       string = "values.yaml"
 	DefaultValuesSchemaFileName string = "values.schema.json"
 	DefaultNotesFileName        string = "NOTES.txt"
@@ -17,9 +17,20 @@ const (
 	// docker compose
 	DefaultComposeExecutable string = "docker"
 	DefaultTempDirName       string = ".teachart"
-	DefaultChartName         string = "TeaChart"
-	DefaultChartVersion      string = "0.0.0"
-	DefaultAppVersion        string = "0.0.0"
-	DefaultComposeVersion    string = "3.11"
-	DefaultDescription       string = "A new tea chart"
 )
+
+const DefaultMetadataFile string = `name: %s
+description: A TeaChart simple
+version: 0.0.1
+appVersion: "0.0.1"
+`
+
+const DefaultValuesFile string = `# Default values for %s.
+# This is a yaml file
+# You can use these values in your templates by {{ .Values.XXX }}.
+`
+
+const DefaultNotesFile string = `# Notes for %s.
+# This will display when the installation is finished.
+# This file will be rendered by go template.
+`
