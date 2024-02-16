@@ -1,16 +1,17 @@
-# should have .Values.TeaChart
-{{ .Values.TeaChart.ProjectName }}
-{{ .Values.TeaChart.ProjectDir }}
-{{ .Values.TeaChart.TempDir }}
-
-# helm chart metadata
-{{ .Chart.Name }}
-{{ .Chart.Description }}
-{{ .Chart.Version }}
-{{ .Chart.AppVersion }}
-
-# default values
-{{ .Values.default.string }}
-
-# user values from file
-{{ .Values.file.string }}
+services:
+  nginx:
+    image: nginx:latest
+    environment:
+      # should have .Values.TeaChart
+      - PROJECT_NAME={{ .Values.TeaChart.ProjectName }}
+      - PROJECT_DIR={{ .Values.TeaChart.ProjectDir }}
+      - TEMP_DIR={{ .Values.TeaChart.TempDir }}
+      # helm chart metadata
+      - CHART_NAME={{ .Chart.Name }}
+      - CHART_DESCRIPTION={{ .Chart.Description }}
+      - CHART_VERSION={{ .Chart.Version }}
+      - CHART_APPVERSION={{ .Chart.AppVersion }}
+      # default values
+      - DEFAULT_STRING={{ .Values.default.string }}
+      # user values from file
+      - FILE_STRING={{ .Values.file.string }}

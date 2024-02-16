@@ -6,7 +6,6 @@ import (
 	"context"
 	"fmt"
 	"os"
-	"strings"
 
 	"github.com/compose-spec/compose-go/v2/cli"
 	compose_cmd "github.com/docker/compose/v2/cmd/compose"
@@ -54,18 +53,19 @@ func NewLintCmd(ctx context.Context, globalOptions *options.GlobalOptions) *cobr
 			if len(args) > 0 {
 				opts.chartDirs = args
 			}
-			return runLint(ctx, opts)
+			return runLint(ctx, cmd, opts)
 		},
 	}
 
 	flags := cmd.Flags()
+	addChartFlags(flags, opts.ChartOptions)
+	addValueFlags(flags, &opts.values)
 	addConfigFlasg(flags, opts.configOptions)
-	flags.StringVarP(&opts.ChartOptions.Version, "version", "v", "", "the remote teachart version.")
 
 	return cmd
 }
 
-func runLint(ctx context.Context, opts lintOptions) error {
+func runLint(ctx context.Context, cmd *cobra.Command, opts lintOptions) error {
 	pofs := []cli.ProjectOptionsFn{
 		cli.WithInterpolation(!opts.noInterpolate),
 		cli.WithResolvedPaths(!opts.noResolvePath),
@@ -110,23 +110,21 @@ func runLint(ctx context.Context, opts lintOptions) error {
 		})
 	}
 
-	var message strings.Builder
 	failed := 0
 	for _, chartDir := range opts.chartDirs {
-		fmt.Fprintf(&message, "==> Linting %s\n", chartDir)
+		fmt.Fprintf(cmd.OutOrStdout(), "==> Linting %s\n", chartDir)
 
 		content, err := lintFn(chartDir)
 		if err != nil {
-			fmt.Fprintf(&message, "Error %s\n", err)
+			fmt.Fprintf(cmd.OutOrStderr(), "Error %s\n", err)
 			failed++
 			continue
 		}
 
 		if !opts.Quiet {
-			fmt.Fprintf(&message, "%s\n", string(content))
+			fmt.Fprintf(cmd.OutOrStdout(), "%s\n", string(content))
 		}
 	}
-	fmt.Print(message.String())
-	fmt.Printf("%d chart(s) linted, %d chart(s) failed\n", len(opts.chartDirs), failed)
+	fmt.Fprintf(cmd.OutOrStdout(), "%d chart(s) linted, %d chart(s) failed\n", len(opts.chartDirs), failed)
 	return nil
 }
