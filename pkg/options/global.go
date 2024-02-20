@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 
 	compose_cmd "github.com/docker/compose/v2/cmd/compose"
-	"github.com/yp05327/teachart/pkg/engine"
+	"github.com/yp05327/teachart/pkg/values"
 )
 
 // GlobalOptions is the global configuration
@@ -87,8 +87,8 @@ func (g *GlobalOptions) GetProjectOptions() *compose_cmd.ProjectOptions {
 	}
 }
 
-func (g *GlobalOptions) GetTeaChart() *engine.TeaChart {
-	return &engine.TeaChart{
+func (g *GlobalOptions) GetTeaChart() *values.TeaChart {
+	return &values.TeaChart{
 		ProjectName: g.GetProjectName(),
 		ProjectDir:  g.GetProjectDir(),
 		TempDir:     g.GetTempDir(),

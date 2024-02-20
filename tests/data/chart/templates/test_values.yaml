@@ -3,14 +3,14 @@ services:
     image: nginx:latest
     environment:
       # should have .Values.TeaChart
-      - PROJECT_NAME={{ .Values.TeaChart.ProjectName }}
-      - PROJECT_DIR={{ .Values.TeaChart.ProjectDir }}
-      - TEMP_DIR={{ .Values.TeaChart.TempDir }}
+      - PROJECT_NAME={{ .TeaChart.ProjectName }}
+      - PROJECT_DIR={{ .TeaChart.ProjectDir }}
+      - TEMP_DIR={{ .TeaChart.TempDir }}
       # helm chart metadata
-      - CHART_NAME={{ .Chart.Name }}
-      - CHART_DESCRIPTION={{ .Chart.Description }}
-      - CHART_VERSION={{ .Chart.Version }}
-      - CHART_APPVERSION={{ .Chart.AppVersion }}
+      - CHART_NAME={{ .TeaChart.Name }}
+      - CHART_DESCRIPTION={{ .TeaChart.Description }}
+      - CHART_VERSION={{ .TeaChart.Version }}
+      - CHART_APPVERSION={{ .TeaChart.AppVersion }}
       # default values
       - DEFAULT_STRING={{ .Values.default.string }}
       # user values from file

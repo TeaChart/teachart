@@ -1,6 +1,6 @@
 // Copyright © 2024 TeaChart Authors
 
-package engine
+package helm
 
 import (
 	"fmt"
@@ -11,10 +11,11 @@ import (
 	"strings"
 
 	"github.com/yp05327/teachart/pkg/app"
+	"github.com/yp05327/teachart/pkg/values"
 	"helm.sh/helm/v3/pkg/chart"
 	"helm.sh/helm/v3/pkg/chart/loader"
 	"helm.sh/helm/v3/pkg/chartutil"
-	"helm.sh/helm/v3/pkg/cli/values"
+	helm_values "helm.sh/helm/v3/pkg/cli/values"
 	helm_engine "helm.sh/helm/v3/pkg/engine"
 	"helm.sh/helm/v3/pkg/getter"
 )
@@ -23,55 +24,35 @@ type Helm struct {
 	engine *helm_engine.Engine
 	chart  *chart.Chart
 
-	teachart *TeaChart
+	teachart *values.TeaChart
 }
 
-func newHelm(chartDir string, teachart *TeaChart, opts *NewEngineOptions) (*Helm, error) {
+func New(chartDir string, teachart *values.TeaChart, strict bool) (*Helm, error) {
 	chart, err := loader.Load(chartDir)
 	if err != nil {
 		return nil, err
 	}
+	teachart.Metadata = chart.Metadata
+
 	// TODO support Dependencies
 
-	if opts == nil {
-		opts = &NewEngineOptions{}
-	}
 	return &Helm{
 		engine: &helm_engine.Engine{
-			Strict: opts.Strict,
+			Strict: strict,
 		},
 		chart:    chart,
 		teachart: teachart,
 	}, nil
 }
 
-func (h *Helm) Render(valueOpts values.Options, save bool) (map[string]string, error) {
-	renderValues, err := h.getRenderValues(valueOpts)
-	if err != nil {
-		return nil, err
-	}
-	files, err := h.engine.Render(h.chart, renderValues)
-	if err != nil {
-		return nil, err
-	}
-	if save {
-		err = h.save(files)
-	}
-	return files, err
-}
-
-func (h *Helm) getRenderValues(valueOpts values.Options) (chartutil.Values, error) {
+func (h *Helm) getRenderValues(valueOpts helm_values.Options) (chartutil.Values, error) {
 	// user define values
 	userValues, err := valueOpts.MergeValues(getter.Providers{})
 	if err != nil {
 		return nil, err
 	}
 
-	top := map[string]interface{}{
-		"Chart": h.chart.Metadata,
-	}
-
-	userValues["TeaChart"] = h.teachart
+	top := map[string]interface{}{}
 	values, err := chartutil.CoalesceValues(h.chart, userValues)
 	if err != nil {
 		return top, err
@@ -83,7 +64,6 @@ func (h *Helm) getRenderValues(valueOpts values.Options) (chartutil.Values, erro
 	}
 	top["Values"] = values
 	return top, nil
-
 }
 
 func (h *Helm) save(files map[string]string) error {

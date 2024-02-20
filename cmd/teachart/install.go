@@ -139,7 +139,7 @@ func NewInstallCmd(ctx context.Context, globalOptions *options.GlobalOptions) *c
 			if err != nil {
 				return errors.Wrap(err, "Create compose client error")
 			}
-			renderEngine, err := engine.NewRenderEngine(opts.GetChartDir(), opts.GetTeaChart(), nil)
+			renderEngine, err := engine.NewRenderEngine(opts.GetChartDir(), opts.GetTeaChart(), false)
 			if err != nil {
 				return errors.Wrap(err, "Create helm engine error")
 			}
