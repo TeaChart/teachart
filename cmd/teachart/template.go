@@ -6,6 +6,7 @@ import (
 	"context"
 	"fmt"
 	"path/filepath"
+	"strings"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -44,7 +45,8 @@ func NewTemplateCmd(ctx context.Context, globalOptions *options.GlobalOptions) *
 			}
 
 			if opts.Dir == "" {
-				manager := repo.NewManager(filepath.Join(globalOptions.GetInstallDir(), app.DefaultRepoDir), app.DefaultRemoteName)
+				repoPath := filepath.Join(globalOptions.GetInstallDir(), app.DefaultRepoDir)
+				manager := repo.NewManager(repoPath, app.DefaultRemoteName)
 				if err := manager.Init(); err != nil {
 					return err
 				}
@@ -60,8 +62,9 @@ func NewTemplateCmd(ctx context.Context, globalOptions *options.GlobalOptions) *
 				}); err != nil {
 					return errors.Wrap(err, "checkout failed")
 				}
+				opts.Dir = filepath.Join(repoPath, opts.Name)
 			}
-			return runTemplate(ctx, opts)
+			return runTemplate(ctx, cmd, opts)
 		},
 	}
 
@@ -73,11 +76,14 @@ func NewTemplateCmd(ctx context.Context, globalOptions *options.GlobalOptions) *
 	return cmd
 }
 
-func runTemplate(ctx context.Context, opts templateOptions) error {
+func runTemplate(ctx context.Context, cmd *cobra.Command, opts templateOptions) error {
 	renderEngine, err := engine.NewRenderEngine(opts.GetChartDir(), opts.GetTeaChart(), nil)
 	if err != nil {
 		return errors.Wrap(err, "Create helm engine error")
 	}
-	_, err = renderEngine.Render(opts.values, opts.save)
+	files, err := renderEngine.Render(opts.values, opts.save)
+	for fileName, content := range files {
+		fmt.Fprintf(cmd.OutOrStdout(), "%s\n%s\n%s\n", fileName, strings.Repeat("-", len(fileName)), content)
+	}
 	return err
 }
