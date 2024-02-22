@@ -3,7 +3,7 @@ module github.com/yp05327/teachart
 go 1.22
 
 require (
-	github.com/compose-spec/compose-go/v2 v2.0.0-rc.5
+	github.com/compose-spec/compose-go/v2 v2.0.0-rc.8
 	github.com/docker/cli v25.0.3+incompatible
 	github.com/docker/compose/v2 v2.24.5
 	github.com/go-git/go-git/v5 v5.11.0
