@@ -43,15 +43,15 @@ func NewClient(services []string, projectOpts *compose_cmd.ProjectOptions) (*Cli
 	}, nil
 }
 
-func (c *Client) toProject(pofs []cli.ProjectOptionsFn) (*types.Project, error) {
-	return c.ProjectOptions.ToProject(c.dockerCli, c.services, pofs...)
+func (c *Client) toProject(ctx context.Context, pofs []cli.ProjectOptionsFn) (*types.Project, error) {
+	project, _, err := c.ProjectOptions.ToProject(ctx, c.dockerCli, c.services, pofs...)
+	return project, err
 }
 
 func (c *Client) Up(ctx context.Context, createOpts api.CreateOptions, startOpts api.StartOptions) error {
-	project, err := c.toProject([]cli.ProjectOptionsFn{
+	project, err := c.toProject(ctx, []cli.ProjectOptionsFn{
 		cli.WithResolvedPaths(true),
 		cli.WithDiscardEnvFile,
-		cli.WithContext(ctx),
 	})
 	if err != nil {
 		return err
@@ -73,10 +73,9 @@ func (c *Client) Down(ctx context.Context, downOpts api.DownOptions) error {
 }
 
 func (c *Client) Config(ctx context.Context, pofs []cli.ProjectOptionsFn, configOpts api.ConfigOptions) ([]byte, error) {
-	project, err := c.toProject([]cli.ProjectOptionsFn{
+	project, err := c.toProject(ctx, []cli.ProjectOptionsFn{
 		cli.WithResolvedPaths(true),
 		cli.WithDiscardEnvFile,
-		cli.WithContext(ctx),
 	})
 	if err != nil {
 		return nil, err
