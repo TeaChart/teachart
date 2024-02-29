@@ -72,7 +72,6 @@ func runLint(ctx context.Context, cmd *cobra.Command, opts lintOptions) error {
 		cli.WithNormalization(!opts.noNormalize),
 		cli.WithConsistency(!opts.noConsistency),
 		cli.WithDiscardEnvFile,
-		cli.WithContext(ctx),
 	}
 
 	lintFn := func(chartDir string) ([]byte, error) {
