@@ -4,7 +4,7 @@ go 1.22
 
 require (
 	github.com/compose-spec/compose-go/v2 v2.0.0-rc.7
-	github.com/docker/cli v25.0.3+incompatible
+	github.com/docker/cli v25.0.4+incompatible
 	github.com/docker/compose/v2 v2.24.6
 	github.com/go-git/go-git/v5 v5.11.0
 	github.com/gosuri/uitable v0.0.4
