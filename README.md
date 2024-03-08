@@ -66,7 +66,7 @@ You can use `-h` flag to check more optional flags which are not mentioned here.
 
 As we use Helm's engine, you can use all features from Helm.
 
-And we added `.Values.TeaChart` for some special values from TeaChart.
+But `.Chart` is overrided to `.TeaChart`, and not all values are avaliable in `.TeaChart`.
 
 ### For TeaChart developer
 
